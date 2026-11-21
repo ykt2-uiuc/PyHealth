@@ -119,5 +119,37 @@ class TestOverlaps(unittest.TestCase):
         )
 
 
+class TestDropSentences(unittest.TestCase):
+    def setUp(self):
+        self.fact_filter = UnsupportedFactFilter(medication_names=MEDICATIONS)
+
+    def test_drops_sentences_that_hold_a_span(self):
+        spans = self.fact_filter.find(SUMMARY, CONTEXT)
+        self.assertEqual(
+            self.fact_filter.drop_sentences(SUMMARY, spans),
+            "Dear Mr. ___, You were admitted for chest pain. Your heart tests were "
+            "normal. Please take aspirin 81 mg daily and metoprolol 25 mg twice "
+            "daily.",
+        )
+
+    def test_no_spans_keeps_the_summary(self):
+        self.assertEqual(self.fact_filter.drop_sentences(SUMMARY, []), SUMMARY)
+
+    def test_decimal_point_does_not_end_a_sentence(self):
+        summary = "Take 2.5 mg daily. Rest at home."
+        spans = self.fact_filter.find(summary, "")
+        self.assertEqual(
+            self.fact_filter.drop_sentences(summary, spans), "Rest at home."
+        )
+
+    def test_all_sentences_flagged_gives_empty_text(self):
+        summary = "Take 10 mg. Come back in 2 days."
+        spans = self.fact_filter.find(summary, "")
+        self.assertEqual(self.fact_filter.drop_sentences(summary, spans), "")
+
+    def test_empty_summary_gives_empty_text(self):
+        self.assertEqual(self.fact_filter.drop_sentences("", []), "")
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -17,6 +17,11 @@ KINDS = ("number", "medication")
 # A number such as 10, 2.5 or 1,000. Commas only count as thousands separators.
 _NUMBER_RE = re.compile(r"\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?")
 
+# The space after ".", "!" or "?" ends a sentence, except after a title such as "Mr.".
+_SENTENCE_BREAK_RE = re.compile(
+    r"(?<=[.!?])(?<!\bMr\.)(?<!\bMrs\.)(?<!\bMs\.)(?<!\bDr\.)\s+"
+)
+
 
 def normalize_number(text: str) -> str:
     """Returns one standard form of a number, so equal values compare equal.
@@ -101,6 +106,35 @@ class UnsupportedFactFilter:
             spans += self._find_medications(summary, context)
         return _remove_overlaps(spans)
 
+    def drop_sentences(self, summary: str, spans: list[Span]) -> str:
+        """Removes every sentence of ``summary`` that holds a span.
+
+        A sentence ends at ".", "!" or "?" followed by whitespace. A decimal
+        point ("2.5") or a title ("Mr.", "Mrs.", "Ms.", "Dr.") does not end a
+        sentence.
+
+        Args:
+            summary: The patient summary that ``spans`` point into.
+            spans: Spans from :meth:`find` on the same ``summary``.
+
+        Returns:
+            The sentences without spans, joined by single spaces. An empty
+            string if every sentence holds a span.
+
+        Examples:
+            >>> fact_filter = UnsupportedFactFilter()
+            >>> summary = "Rest at home. Take 10 mg daily."
+            >>> spans = fact_filter.find(summary, "Rest.")
+            >>> fact_filter.drop_sentences(summary, spans)
+            'Rest at home.'
+        """
+        kept = [
+            summary[start:end]
+            for start, end in _sentence_bounds(summary)
+            if not any(s["start"] < end and s["end"] > start for s in spans)
+        ]
+        return " ".join(kept)
+
     def _find_numbers(self, summary: str, context: str) -> list[Span]:
         supported = {normalize_number(m.group()) for m in _NUMBER_RE.finditer(context)}
         return [
@@ -125,6 +159,19 @@ def _make_span(match: re.Match, label: str) -> Span:
         "text": match.group(),
         "label": label,
     }
+
+
+def _sentence_bounds(text: str) -> list[tuple[int, int]]:
+    """Returns (start, end) offsets of each sentence, without outer whitespace."""
+    start = len(text) - len(text.lstrip())
+    stop = len(text.rstrip())
+    bounds = []
+    for match in _SENTENCE_BREAK_RE.finditer(text, start, stop):
+        bounds.append((start, match.start()))
+        start = match.end()
+    if start < stop:
+        bounds.append((start, stop))
+    return bounds
 
 
 def _remove_overlaps(spans: list[Span]) -> list[Span]:
