@@ -9,6 +9,11 @@
 import json
 from pathlib import Path
 
+from pyhealth.tasks.patient_summarization_filter import (
+    UnsupportedFactFilter,
+    span_scores,
+)
+
 
 def load_examples(path: str | Path) -> list[dict]:
     """Reads an expert-labeled file: one JSON object per line.
@@ -25,3 +30,19 @@ def load_examples(path: str | Path) -> list[dict]:
     """
     with open(path, encoding="utf-8") as f:
         return [json.loads(line) for line in f if line.strip()]
+
+
+def evaluate(examples: list[dict], fact_filter: UnsupportedFactFilter) -> dict:
+    """Runs the filter on each example and scores its spans against the experts.
+
+    Args:
+        examples: Examples from :func:`load_examples`.
+        fact_filter: The filter to score.
+
+    Returns:
+        The scores from ``span_scores``: precision, recall, f1 and the counts.
+    """
+    summaries = [ex["summary"] for ex in examples]
+    pred = [fact_filter.find(ex["summary"], ex["text"]) for ex in examples]
+    gold = [ex["labels"] for ex in examples]
+    return span_scores(summaries, pred, gold)

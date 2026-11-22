@@ -9,7 +9,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from examples.ann_pt_summ_unsupported_fact_filter_eval import load_examples
+from examples.ann_pt_summ_unsupported_fact_filter_eval import evaluate, load_examples
+from pyhealth.tasks.patient_summarization_filter import UnsupportedFactFilter
 
 
 def make_label(summary: str, text: str, label: str) -> dict:
@@ -46,6 +47,23 @@ class TestLoadExamples(unittest.TestCase):
 
     def test_reads_one_example_per_line_in_order(self):
         self.assertEqual(load_examples(self.path), EXAMPLES)
+
+
+class TestEvaluate(unittest.TestCase):
+    def test_worked_example(self):
+        # Flags in A: lisinopril, 10, 2 (81 is in the context). lisinopril is
+        # partial in "lisinopril 10 mg", 10 is spurious because that expert
+        # span is used, 2 is partial in "2 weeks", cardiology is missed.
+        # B has no flags and no labels.
+        fact_filter = UnsupportedFactFilter(medication_names=["aspirin", "lisinopril"])
+        scores = evaluate(EXAMPLES, fact_filter)
+        self.assertEqual(
+            [scores[k] for k in ("correct", "partial", "spurious", "missed")],
+            [0, 2, 1, 1],
+        )
+        for k in ("precision", "recall", "f1"):
+            with self.subTest(score=k):
+                self.assertAlmostEqual(scores[k], 1 / 3)
 
 
 if __name__ == "__main__":
