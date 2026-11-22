@@ -17,6 +17,9 @@ KINDS = ("number", "medication")
 # A number such as 10, 2.5 or 1,000. Commas only count as thousands separators.
 _NUMBER_RE = re.compile(r"\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?")
 
+# Words and runs of punctuation, split as NLTK's ``wordpunct_tokenize`` does.
+_WORD_RE = re.compile(r"\w+|[^\w\s]+")
+
 # The space after ".", "!" or "?" ends a sentence, except after a title such as "Mr.".
 _SENTENCE_BREAK_RE = re.compile(
     r"(?<=[.!?])(?<!\bMr\.)(?<!\bMrs\.)(?<!\bMs\.)(?<!\bDr\.)\s+"
@@ -150,6 +153,79 @@ class UnsupportedFactFilter:
                 continue
             spans += [_make_span(m, "medication") for m in pattern.finditer(summary)]
         return spans
+
+
+def span_scores(
+    summaries: Sequence[str],
+    pred: Sequence[list[Span]],
+    gold: Sequence[list[Span]],
+) -> dict[str, float]:
+    """Scores predicted spans against expert spans with partial matching.
+
+    Follows the evaluation code of Hegselmann et al. (CHIL 2024): the
+    "partial" scheme of ``nervaluate`` 0.1.8 (SemEval-2013 Task 9.1) on word
+    positions, with labels ignored. Character offsets become word positions
+    with the split of NLTK's ``wordpunct_tokenize``. For each predicted span,
+    in order: the same words as an expert span count as correct; else the
+    first overlapping expert span that no other prediction used counts as
+    partial; else the prediction is spurious. Expert spans with no match are
+    missed. As in ``nervaluate``, a span's last word position is inclusive, so
+    spans on neighbouring words overlap. Counts are summed over all summaries.
+
+    Args:
+        summaries: The summaries the spans point into.
+        pred: Predicted spans, one list per summary.
+        gold: Expert spans, one list per summary.
+
+    Returns:
+        ``precision`` and ``recall`` (correct plus half of partial, divided by
+        the predicted or the expert spans), ``f1``, and the counts
+        ``correct``, ``partial``, ``spurious`` and ``missed``.
+
+    Raises:
+        ValueError: If the three sequences have different lengths.
+
+    Examples:
+        >>> summary = "Take lisinopril 10 mg."
+        >>> pred = [[{"start": 5, "end": 15, "label": "medication"}]]
+        >>> gold = [[{"start": 5, "end": 21, "label": "medication_unsupported"}]]
+        >>> span_scores([summary], pred, gold)["f1"]
+        0.5
+    """
+    if not len(summaries) == len(pred) == len(gold):
+        raise ValueError("summaries, pred and gold must have the same length")
+    counts = dict.fromkeys(("correct", "partial", "spurious", "missed"), 0)
+    for summary, pred_spans, gold_spans in zip(summaries, pred, gold):
+        gold_words = [_word_positions(summary, span) for span in gold_spans]
+        used: set[int] = set()
+        for p_start, p_end in (_word_positions(summary, s) for s in pred_spans):
+            outcome = "spurious"
+            for i, (g_start, g_end) in enumerate(gold_words):
+                if (p_start, p_end) == (g_start, g_end):
+                    outcome = "correct"
+                elif i not in used and p_start <= g_end and g_start <= p_end:
+                    outcome = "partial"
+                else:
+                    continue
+                used.add(i)
+                break
+            counts[outcome] += 1
+        counts["missed"] += len(gold_words) - len(used)
+
+    matched = counts["correct"] + 0.5 * counts["partial"]
+    predicted = counts["correct"] + counts["partial"] + counts["spurious"]
+    expected = counts["correct"] + counts["partial"] + counts["missed"]
+    precision = matched / predicted if predicted else 0.0
+    recall = matched / expected if expected else 0.0
+    f1 = 2 * precision * recall / (precision + recall) if precision + recall else 0.0
+    return {"precision": precision, "recall": recall, "f1": f1, **counts}
+
+
+def _word_positions(summary: str, span: Span) -> tuple[int, int]:
+    """Converts a character span to (start, end) word positions, end exclusive."""
+    start = len(_WORD_RE.findall(summary[: span["start"]]))
+    length = len(_WORD_RE.findall(summary[span["start"] : span["end"]]))
+    return start, start + length
 
 
 def _make_span(match: re.Match, label: str) -> Span:

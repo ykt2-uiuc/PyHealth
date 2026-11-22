@@ -8,6 +8,7 @@ import unittest
 from pyhealth.tasks.patient_summarization_filter import (
     UnsupportedFactFilter,
     normalize_number,
+    span_scores,
 )
 
 MEDICATIONS = ("aspirin", "metoprolol", "lisinopril")
@@ -149,6 +150,71 @@ class TestDropSentences(unittest.TestCase):
 
     def test_empty_summary_gives_empty_text(self):
         self.assertEqual(self.fact_filter.drop_sentences("", []), "")
+
+
+SCORED = "Take lisinopril 10 mg daily. See your cardiologist in 2 weeks."
+
+
+def make_span(text: str, label: str, summary: str = SCORED, after: int = 0) -> dict:
+    """Builds a span for the first ``text`` in ``summary`` at or after ``after``."""
+    start = summary.index(text, after)
+    return {"start": start, "end": start + len(text), "text": text, "label": label}
+
+
+class TestSpanScores(unittest.TestCase):
+    def test_worked_example(self):
+        pred = [
+            make_span("lisinopril", "medication"),
+            make_span("10", "number"),
+            make_span("2", "number", after=SCORED.index("in 2")),
+        ]
+        gold = [
+            make_span("lisinopril 10 mg", "medication_unsupported"),
+            make_span("cardiologist", "name_unsupported"),
+        ]
+        scores = span_scores([SCORED], [pred], [gold])
+        self.assertEqual(
+            [scores[k] for k in ("correct", "partial", "spurious", "missed")],
+            [0, 1, 2, 1],
+        )
+        self.assertAlmostEqual(scores["precision"], 0.5 / 3)
+        self.assertAlmostEqual(scores["recall"], 0.5 / 2)
+        self.assertAlmostEqual(scores["f1"], 0.2)
+
+    def test_exact_match_ignores_labels(self):
+        pred = [make_span("cardiologist", "medication")]
+        gold = [make_span("cardiologist", "name_unsupported")]
+        scores = span_scores([SCORED], [pred], [gold])
+        self.assertEqual(scores["correct"], 1)
+        self.assertEqual(
+            [scores[k] for k in ("precision", "recall", "f1")], [1.0, 1.0, 1.0]
+        )
+
+    def test_neighbouring_words_count_as_overlap(self):
+        pred = [make_span("10", "number")]
+        gold = [make_span("mg", "word_unsupported")]
+        self.assertEqual(span_scores([SCORED], [pred], [gold])["partial"], 1)
+
+    def test_no_predictions_gives_zero_scores(self):
+        gold = [make_span("cardiologist", "name_unsupported")]
+        scores = span_scores([SCORED], [[]], [gold])
+        self.assertEqual(scores["missed"], 1)
+        self.assertEqual(
+            [scores[k] for k in ("precision", "recall", "f1")], [0.0, 0.0, 0.0]
+        )
+
+    def test_counts_are_summed_over_summaries(self):
+        exact = [make_span("cardiologist", "name_unsupported")]
+        pred_b = [make_span("10", "number"), make_span("daily", "word")]
+        gold_b = [make_span("weeks", "time_unsupported")]
+        scores = span_scores([SCORED, SCORED], [exact, pred_b], [exact, gold_b])
+        self.assertAlmostEqual(scores["precision"], 1 / 3)
+        self.assertAlmostEqual(scores["recall"], 1 / 2)
+        self.assertAlmostEqual(scores["f1"], 0.4)
+
+    def test_different_lengths_raise(self):
+        with self.assertRaises(ValueError):
+            span_scores([SCORED], [[], []], [[]])
 
 
 if __name__ == "__main__":
