@@ -79,7 +79,7 @@ class TestMain(unittest.TestCase):
         self.data = tmp / "labels.jsonl"
         self.data.write_text("".join(json.dumps(ex) + "\n" for ex in EXAMPLES))
         self.medications = tmp / "medications.txt"
-        self.medications.write_text("aspirin\n\nlisinopril\n")
+        self.medications.write_text("examplol\n\nfakepril\n")
 
     def tearDown(self):
         self.tmp.cleanup()
@@ -98,13 +98,23 @@ class TestMain(unittest.TestCase):
         # number: 10 and 2 are partial, cardiology is missed -> F1 40.0.
         # medication: lisinopril is partial, two spans missed -> F1 25.0.
         # both: the worked example -> F1 33.3.
-        rows = self.rows(self.run_main("--medications", str(self.medications)))
+        rows = self.rows(self.run_main())
         self.assertEqual([row[0] for row in rows], ["number", "medication", "both"])
         self.assertEqual([row[3] for row in rows], ["40.0", "25.0", "33.3"])
 
-    def test_without_medications_checks_numbers_only(self):
-        rows = self.rows(self.run_main())
-        self.assertEqual([row[0] for row in rows], ["number"])
+    def test_medications_file_adds_to_the_default_names(self):
+        # The default list has lisinopril; only the file has examplol.
+        summary = "Take lisinopril and examplol."
+        labels = [
+            make_label(summary, name, "medication_unsupported")
+            for name in ("lisinopril", "examplol")
+        ]
+        example = {"text": "No drugs.", "summary": summary, "labels": labels}
+        self.data.write_text(json.dumps(example) + "\n")
+        default_row = self.rows(self.run_main())[1]
+        extra_row = self.rows(self.run_main("--medications", str(self.medications)))[1]
+        self.assertEqual(default_row[:4], ["medication", "100.0", "50.0", "66.7"])
+        self.assertEqual(extra_row[:4], ["medication", "100.0", "100.0", "100.0"])
 
     def test_prints_no_text_from_the_data(self):
         output = self.run_main("--medications", str(self.medications))

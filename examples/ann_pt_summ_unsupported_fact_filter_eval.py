@@ -9,7 +9,7 @@
 #
 # Usage:
 #     python examples/ann_pt_summ_unsupported_fact_filter_eval.py \
-#         --data <labels.jsonl> [--medications <names.txt>]
+#         --data <labels.jsonl> [--medications <extra_names.txt>]
 
 import argparse
 import json
@@ -17,6 +17,7 @@ from collections.abc import Sequence
 from pathlib import Path
 
 from pyhealth.tasks.patient_summarization_filter import (
+    DEFAULT_MEDICATIONS,
     UnsupportedFactFilter,
     span_scores,
 )
@@ -73,7 +74,7 @@ def read_medication_names(path: str | Path) -> list[str]:
 def main(argv: Sequence[str] | None = None) -> None:
     """Prints precision, recall and F1 (in %) and the counts per filter setting.
 
-    Without ``--medications``, only the numbers are checked.
+    The names in the ``--medications`` file are added to ``DEFAULT_MEDICATIONS``.
 
     Args:
         argv: Command-line arguments. If ``None``, reads ``sys.argv``.
@@ -82,16 +83,17 @@ def main(argv: Sequence[str] | None = None) -> None:
         description="Score the unsupported-fact filter against expert labels."
     )
     parser.add_argument("--data", required=True, help="expert-labeled JSONL file")
-    parser.add_argument("--medications", help="text file, one name per line")
+    parser.add_argument("--medications", help="extra medication names, one per line")
     args = parser.parse_args(argv)
 
     examples = load_examples(args.data)
-    names = read_medication_names(args.medications) if args.medications else []
-    settings = SETTINGS if names else {"number": SETTINGS["number"]}
+    names = list(DEFAULT_MEDICATIONS)
+    if args.medications:
+        names += read_medication_names(args.medications)
 
     header = (f"{c:>9}" for c in COUNTS)
     print(f"{'filter':<12}{'P':>7}{'R':>7}{'F1':>7}", *header, sep="")
-    for setting, kinds in settings.items():
+    for setting, kinds in SETTINGS.items():
         fact_filter = UnsupportedFactFilter(kinds=kinds, medication_names=names)
         scores = evaluate(examples, fact_filter)
         percents = (f"{100 * scores[k]:>7.1f}" for k in ("precision", "recall", "f1"))
