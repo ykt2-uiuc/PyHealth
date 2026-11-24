@@ -14,6 +14,39 @@ Span = dict[str, Any]
 
 KINDS = ("number", "medication")
 
+# Common US generic names: ranks 1 to 130 of the ClinCalc DrugStats Top 300 of
+# 2024 (https://clincalc.com/DrugStats, from the MEPS survey). Combinations are
+# split into ingredients and all insulins are one name. Left out: names that plain
+# text also uses for lab tests, nutrients or body parts, and extra salt forms.
+# fmt: off
+DEFAULT_MEDICATIONS = (
+    "acetaminophen", "adalimumab", "albuterol", "alendronate", "allopurinol",
+    "alprazolam", "amitriptyline", "amlodipine", "amoxicillin", "apixaban",
+    "aripiprazole", "aspirin", "atenolol", "atorvastatin", "azelastine",
+    "azithromycin", "baclofen", "budesonide", "bupropion", "buspirone",
+    "carvedilol", "celecoxib", "cephalexin", "cetirizine", "chlorthalidone",
+    "cholecalciferol", "citalopram", "clavulanate", "clonazepam", "clonidine",
+    "clopidogrel", "cyanocobalamin", "cyclobenzaprine", "dapagliflozin",
+    "dextroamphetamine", "diclofenac", "diltiazem", "doxycycline", "dulaglutide",
+    "duloxetine", "empagliflozin", "ergocalciferol", "escitalopram", "esomeprazole",
+    "ezetimibe", "famotidine", "fenofibrate", "finasteride", "fluoxetine",
+    "fluticasone", "formoterol", "furosemide", "gabapentin", "glimepiride",
+    "glipizide", "hydralazine", "hydrochlorothiazide", "hydrocodone", "hydroxyzine",
+    "ibuprofen", "insulin", "lamotrigine", "latanoprost", "levetiracetam",
+    "levothyroxine", "lisdexamfetamine", "lisinopril", "loratadine", "lorazepam",
+    "losartan", "meloxicam", "metformin", "methocarbamol", "methylphenidate",
+    "metoprolol", "mirtazapine", "montelukast", "naproxen", "nifedipine",
+    "norethindrone", "norgestimate", "olmesartan", "omeprazole", "ondansetron",
+    "oxybutynin", "oxycodone", "pantoprazole", "paroxetine", "pravastatin",
+    "prednisolone", "prednisone", "pregabalin", "propranolol", "quetiapine",
+    "rivaroxaban", "rosuvastatin", "salmeterol", "semaglutide", "sertraline",
+    "simvastatin", "sitagliptin", "spironolactone", "sumatriptan", "tadalafil",
+    "tamsulosin", "tirzepatide", "tizanidine", "topiramate", "tramadol",
+    "trazodone", "triamcinolone", "umeclidinium", "valacyclovir", "valsartan",
+    "venlafaxine", "vilanterol", "warfarin", "zolpidem",
+)
+# fmt: on
+
 # A number such as 10, 2.5 or 1,000. Commas only count as thousands separators.
 _NUMBER_RE = re.compile(r"\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?")
 
@@ -56,10 +89,14 @@ class UnsupportedFactFilter:
     context. Hegselmann et al. (CHIL 2024) show that unsupported facts in
     training summaries teach a model to hallucinate.
 
+    ``DEFAULT_MEDICATIONS`` holds common generic names only. It does not match a
+    brand name to its generic name, and it lacks most drugs that are given only
+    in a hospital.
+
     Args:
         kinds: The facts to check: ``"number"``, ``"medication"`` or both.
-        medication_names: Medication names to look for. If ``None``, no
-            medications are checked.
+        medication_names: Medication names to look for, in place of
+            ``DEFAULT_MEDICATIONS``. If ``None``, the default names are used.
 
     Raises:
         ValueError: If ``kinds`` holds an unknown kind.
@@ -69,6 +106,14 @@ class UnsupportedFactFilter:
         >>> spans = fact_filter.find("Take lisinopril 10 mg.", "No new drugs.")
         >>> [(s["text"], s["label"]) for s in spans]
         [('lisinopril', 'medication'), ('10', 'number')]
+
+        Add names to the default list:
+
+        >>> names = [*DEFAULT_MEDICATIONS, "vancomycin"]
+        >>> fact_filter = UnsupportedFactFilter(medication_names=names)
+        >>> spans = fact_filter.find("Take vancomycin and metformin.", "")
+        >>> [s["text"] for s in spans]
+        ['vancomycin', 'metformin']
     """
 
     def __init__(
@@ -80,7 +125,9 @@ class UnsupportedFactFilter:
         if unknown:
             raise ValueError(f"unknown kinds: {sorted(unknown)}")
         self.kinds = tuple(kinds)
-        self.medication_names = tuple(medication_names or ())
+        if medication_names is None:
+            medication_names = DEFAULT_MEDICATIONS
+        self.medication_names = tuple(medication_names)
         self._medication_patterns = [
             re.compile(rf"\b{re.escape(name)}\b", flags=re.IGNORECASE)
             for name in self.medication_names

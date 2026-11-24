@@ -6,6 +6,7 @@
 import unittest
 
 from pyhealth.tasks.patient_summarization_filter import (
+    DEFAULT_MEDICATIONS,
     UnsupportedFactFilter,
     normalize_number,
     span_scores,
@@ -85,8 +86,24 @@ class TestMedications(unittest.TestCase):
         fact_filter = UnsupportedFactFilter(medication_names=["insulin"])
         self.assertEqual(fact_filter.find("No sign of insulinoma.", ""), [])
 
-    def test_no_medication_names_checks_numbers_only(self):
-        spans = UnsupportedFactFilter().find(SUMMARY, CONTEXT)
+    def test_default_list_flags_a_common_medication(self):
+        spans = UnsupportedFactFilter().find("Take metformin.", "Gave aspirin.")
+        self.assertEqual(
+            [(s["text"], s["label"]) for s in spans], [("metformin", "medication")]
+        )
+
+    def test_default_list_is_clean(self):
+        self.assertEqual(len(set(DEFAULT_MEDICATIONS)), len(DEFAULT_MEDICATIONS))
+        for name in DEFAULT_MEDICATIONS:
+            with self.subTest(name=name):
+                self.assertRegex(name, r"^[a-z]+$")
+        # Plain text also uses these names for lab tests, nutrients or body parts.
+        for name in ("potassium", "iron", "magnesium", "oxygen", "thyroid"):
+            with self.subTest(left_out=name):
+                self.assertNotIn(name, DEFAULT_MEDICATIONS)
+
+    def test_empty_medication_names_checks_numbers_only(self):
+        spans = UnsupportedFactFilter(medication_names=[]).find(SUMMARY, CONTEXT)
         self.assertEqual([s["text"] for s in spans], ["10", "2"])
 
 
