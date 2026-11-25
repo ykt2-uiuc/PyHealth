@@ -123,6 +123,9 @@ from .medical_coding import MIMIC3ICD9Coding
 from .medmod_decompensation_mimic4 import (
     MedModDecompensationMIMIC4 as MedModDecompensationMIMIC4,
 )
+from .patient_summarization_mimic4 import (
+    PatientSummarizationMIMIC4 as PatientSummarizationMIMIC4,
+)
 from .meds_outcome_tasks import (
     HospitalReadmissionMEDS as HospitalReadmissionMEDS,
     ICUAdmissionMEDS as ICUAdmissionMEDS,
