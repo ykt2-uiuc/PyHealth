@@ -1,0 +1,673 @@
+Current code rerun: all bundles and approaches, 500 summaries, seed 0. Actual filter loaded directly because unrelated PyHealth dependencies are missing.
+
+Preset: default, count 500, seed 0
+Error rate: 30%, harmless-number rate: 30%
+Error types: wrong_drug, added_drug, wrong_number, wrong_diagnosis, negation
+
+=== template ===
+Saved 500 summaries to data\default\examples_template.jsonl
+Example summary: You came to the hospital because of diverticulitis. We gave you metronidazole 500 mg for 14 days. Continue your semaglutide at home. Do not take your valsartan until you see your doctor. Follow up with your primary care doctor.
+Planted mistake: None
+
+Experiments for template
+
+A. Filter checks
+Numbers only: precision 17.2%, recall 20.0%, F1 18.5%
+Medications only: precision 100.0%, recall 39.3%, F1 56.5%
+Both checks: precision 38.2%, recall 59.3%, F1 46.5%
+
+B. Error mix (both checks)
+Detectable types only: precision 50.0%, recall 100.0%, F1 66.7%
+All five types: precision 38.2%, recall 59.3%, F1 46.5%
+
+C. Error rate (both checks)
+10% error rate: precision 20.3%, recall 65.5%, F1 31.0%
+30% error rate: precision 38.2%, recall 59.3%, F1 46.5%
+50% error rate: precision 55.7%, recall 62.5%, F1 58.9%
+
+D. Cleaning (both checks)
+0% harmless-number rate: cleaning changed 78 of 500 summaries
+30% harmless-number rate: cleaning changed 211 of 500 summaries
+
+=== handwritten ===
+Saved 500 summaries to data\default\examples_handwritten.jsonl
+Example summary: You had diverticulitis, which is inflamation in your colon. Finish the amoxicillin 875 mg twice a day. Keep taking your sertraline. Stop taking celecoxib, it can irritate your gut.
+Planted mistake: None
+
+Experiments for handwritten
+
+A. Filter checks
+Numbers only: precision 12.8%, recall 13.2%, F1 13.0%
+Medications only: precision 100.0%, recall 47.2%, F1 64.1%
+Both checks: precision 40.2%, recall 60.4%, F1 48.2%
+
+B. Error mix (both checks)
+Detectable types only: precision 48.8%, recall 100.0%, F1 65.6%
+All five types: precision 40.2%, recall 60.4%, F1 48.2%
+
+C. Error rate (both checks)
+10% error rate: precision 14.1%, recall 65.0%, F1 23.1%
+30% error rate: precision 40.2%, recall 60.4%, F1 48.2%
+50% error rate: precision 48.9%, recall 58.8%, F1 53.4%
+
+D. Cleaning (both checks)
+0% harmless-number rate: cleaning changed 81 of 500 summaries
+30% harmless-number rate: cleaning changed 214 of 500 summaries
+
+=== llm ===
+Saved 500 summaries to data\default\examples_llm.jsonl
+Example summary: You were in the hospital for atrial fibrillation, an irregular and fast heartbeat. We started diltiazem 30 mg four times a day to slow your heart rate, and apixaban to lower your risk of stroke. Please continue taking levothyroxine. We stopped your atenolol. Please do not miss any doses of apixaban. Start taking fluticasone every day.
+Planted mistake: added_drug: added 'Start taking fluticasone every day.'
+
+Experiments for llm
+
+A. Filter checks
+Numbers only: precision 13.2%, recall 15.2%, F1 14.2%
+Medications only: precision 100.0%, recall 45.7%, F1 62.7%
+Both checks: precision 37.9%, recall 60.9%, F1 46.7%
+
+B. Error mix (both checks)
+Detectable types only: precision 49.3%, recall 100.0%, F1 66.1%
+All five types: precision 37.9%, recall 60.9%, F1 46.7%
+
+C. Error rate (both checks)
+10% error rate: precision 14.5%, recall 66.7%, F1 23.9%
+30% error rate: precision 37.9%, recall 60.9%, F1 46.7%
+50% error rate: precision 48.7%, recall 59.6%, F1 53.6%
+
+D. Cleaning (both checks)
+0% harmless-number rate: cleaning changed 80 of 500 summaries
+30% harmless-number rate: cleaning changed 220 of 500 summaries
+
+Comparison of approaches (both checks)
+template: precision 38.2%, recall 59.3%, F1 46.5%
+handwritten: precision 40.2%, recall 60.4%, F1 48.2%
+llm: precision 37.9%, recall 60.9%, F1 46.7%
+
+Preset: low_error, count 500, seed 0
+Error rate: 10%, harmless-number rate: 30%
+Error types: wrong_drug, added_drug, wrong_number, wrong_diagnosis, negation
+
+=== template ===
+Saved 500 summaries to data\low_error\examples_template.jsonl
+Example summary: You came to the hospital because of diverticulitis. We gave you metronidazole 500 mg for 14 days. Continue your semaglutide at home. Do not take your valsartan until you see your doctor. Follow up with your primary care doctor.
+Planted mistake: None
+
+Experiments for template
+
+A. Filter checks
+Numbers only: precision 6.6%, recall 18.2%, F1 9.7%
+Medications only: precision 100.0%, recall 47.3%, F1 64.2%
+Both checks: precision 20.3%, recall 65.5%, F1 31.0%
+
+B. Error mix (both checks)
+Detectable types only: precision 26.7%, recall 100.0%, F1 42.1%
+All five types: precision 20.3%, recall 65.5%, F1 31.0%
+
+C. Error rate (both checks)
+10% error rate: precision 20.3%, recall 65.5%, F1 31.0%
+30% error rate: precision 38.2%, recall 59.3%, F1 46.5%
+50% error rate: precision 55.7%, recall 62.5%, F1 58.9%
+
+D. Cleaning (both checks)
+0% harmless-number rate: cleaning changed 30 of 500 summaries
+30% harmless-number rate: cleaning changed 168 of 500 summaries
+
+=== handwritten ===
+Saved 500 summaries to data\low_error\examples_handwritten.jsonl
+Example summary: You had diverticulitis, which is inflamation in your colon. Finish the amoxicillin 875 mg twice a day. Keep taking your sertraline. Stop taking celecoxib, it can irritate your gut.
+Planted mistake: None
+
+Experiments for handwritten
+
+A. Filter checks
+Numbers only: precision 2.5%, recall 10.0%, F1 3.9%
+Medications only: precision 100.0%, recall 55.0%, F1 71.0%
+Both checks: precision 14.1%, recall 65.0%, F1 23.1%
+
+B. Error mix (both checks)
+Detectable types only: precision 20.1%, recall 100.0%, F1 33.5%
+All five types: precision 14.1%, recall 65.0%, F1 23.1%
+
+C. Error rate (both checks)
+10% error rate: precision 14.1%, recall 65.0%, F1 23.1%
+30% error rate: precision 40.2%, recall 60.4%, F1 48.2%
+50% error rate: precision 48.9%, recall 58.8%, F1 53.4%
+
+D. Cleaning (both checks)
+0% harmless-number rate: cleaning changed 33 of 500 summaries
+30% harmless-number rate: cleaning changed 177 of 500 summaries
+
+=== llm ===
+Saved 500 summaries to data\low_error\examples_llm.jsonl
+Example summary: You were in the hospital for atrial fibrillation, an irregular and fast heartbeat. We started diltiazem 30 mg four times a day to slow your heart rate, and apixaban to lower your risk of stroke. Please continue taking levothyroxine. We stopped your atenolol. Please do not miss any doses of apixaban. Drink 8 glasses of water a day.
+Planted mistake: None
+
+Experiments for llm
+
+A. Filter checks
+Numbers only: precision 2.5%, recall 10.3%, F1 4.1%
+Medications only: precision 100.0%, recall 56.4%, F1 72.1%
+Both checks: precision 14.5%, recall 66.7%, F1 23.9%
+
+B. Error mix (both checks)
+Detectable types only: precision 19.2%, recall 100.0%, F1 32.3%
+All five types: precision 14.5%, recall 66.7%, F1 23.9%
+
+C. Error rate (both checks)
+10% error rate: precision 14.5%, recall 66.7%, F1 23.9%
+30% error rate: precision 37.9%, recall 60.9%, F1 46.7%
+50% error rate: precision 48.7%, recall 59.6%, F1 53.6%
+
+D. Cleaning (both checks)
+0% harmless-number rate: cleaning changed 35 of 500 summaries
+30% harmless-number rate: cleaning changed 170 of 500 summaries
+
+Comparison of approaches (both checks)
+template: precision 20.3%, recall 65.5%, F1 31.0%
+handwritten: precision 14.1%, recall 65.0%, F1 23.1%
+llm: precision 14.5%, recall 66.7%, F1 23.9%
+
+Preset: high_error, count 500, seed 0
+Error rate: 50%, harmless-number rate: 30%
+Error types: wrong_drug, added_drug, wrong_number, wrong_diagnosis, negation
+
+=== template ===
+Saved 500 summaries to data\high_error\examples_template.jsonl
+Example summary: You came to the hospital because of diverticulitis. We gave you metronidazole 500 mg for 14 days. Continue your semaglutide at home. Do not take your valsartan until you see your doctor. Follow up with your primary care doctor. Start taking amitriptyline every day.
+Planted mistake: added_drug: added 'Start taking amitriptyline every day.'
+
+Experiments for template
+
+A. Filter checks
+Numbers only: precision 29.5%, recall 20.8%, F1 24.4%
+Medications only: precision 100.0%, recall 41.7%, F1 58.9%
+Both checks: precision 55.7%, recall 62.5%, F1 58.9%
+
+B. Error mix (both checks)
+Detectable types only: precision 63.4%, recall 100.0%, F1 77.6%
+All five types: precision 55.7%, recall 62.5%, F1 58.9%
+
+C. Error rate (both checks)
+10% error rate: precision 20.3%, recall 65.5%, F1 31.0%
+30% error rate: precision 38.2%, recall 59.3%, F1 46.5%
+50% error rate: precision 55.7%, recall 62.5%, F1 58.9%
+
+D. Cleaning (both checks)
+0% harmless-number rate: cleaning changed 147 of 500 summaries
+30% harmless-number rate: cleaning changed 250 of 500 summaries
+
+=== handwritten ===
+Saved 500 summaries to data\high_error\examples_handwritten.jsonl
+Example summary: You had pneumonia, which is inflamation in your colon. Finish the amoxicillin 875 mg twice a day. Keep taking your sertraline. Stop taking celecoxib, it can irritate your gut. Call 911 if you feel faint or confused.
+Planted mistake: wrong_diagnosis: 'diverticulitis' changed to 'pneumonia'
+
+Experiments for handwritten
+
+A. Filter checks
+Numbers only: precision 20.0%, recall 15.4%, F1 17.4%
+Medications only: precision 100.0%, recall 43.5%, F1 60.6%
+Both checks: precision 48.9%, recall 58.8%, F1 53.4%
+
+B. Error mix (both checks)
+Detectable types only: precision 59.6%, recall 100.0%, F1 74.7%
+All five types: precision 48.9%, recall 58.8%, F1 53.4%
+
+C. Error rate (both checks)
+10% error rate: precision 14.1%, recall 65.0%, F1 23.1%
+30% error rate: precision 40.2%, recall 60.4%, F1 48.2%
+50% error rate: precision 48.9%, recall 58.8%, F1 53.4%
+
+D. Cleaning (both checks)
+0% harmless-number rate: cleaning changed 152 of 500 summaries
+30% harmless-number rate: cleaning changed 266 of 500 summaries
+
+=== llm ===
+Saved 500 summaries to data\high_error\examples_llm.jsonl
+Example summary: You were in the hospital for atrial fibrillation, an irregular and fast heartbeat. We started diltiazem 30 mg four times a day to slow your heart rate, and apixaban to lower your risk of stroke. Please continue taking levothyroxine. We stopped your atenolol. Please do not miss any doses of apixaban. Start taking fluticasone every day.
+Planted mistake: added_drug: added 'Start taking fluticasone every day.'
+
+Experiments for llm
+
+A. Filter checks
+Numbers only: precision 21.6%, recall 17.3%, F1 19.2%
+Medications only: precision 100.0%, recall 42.4%, F1 59.5%
+Both checks: precision 48.7%, recall 59.6%, F1 53.6%
+
+B. Error mix (both checks)
+Detectable types only: precision 61.1%, recall 100.0%, F1 75.9%
+All five types: precision 48.7%, recall 59.6%, F1 53.6%
+
+C. Error rate (both checks)
+10% error rate: precision 14.5%, recall 66.7%, F1 23.9%
+30% error rate: precision 37.9%, recall 60.9%, F1 46.7%
+50% error rate: precision 48.7%, recall 59.6%, F1 53.6%
+
+D. Cleaning (both checks)
+0% harmless-number rate: cleaning changed 154 of 500 summaries
+30% harmless-number rate: cleaning changed 267 of 500 summaries
+
+Comparison of approaches (both checks)
+template: precision 55.7%, recall 62.5%, F1 58.9%
+handwritten: precision 48.9%, recall 58.8%, F1 53.4%
+llm: precision 48.7%, recall 59.6%, F1 53.6%
+
+Preset: detectable_only, count 500, seed 0
+Error rate: 30%, harmless-number rate: 30%
+Error types: wrong_drug, added_drug, wrong_number
+
+=== template ===
+Saved 500 summaries to data\detectable_only\examples_template.jsonl
+Example summary: You came to the hospital because of diverticulitis. We gave you metronidazole 500 mg for 14 days. Continue your semaglutide at home. Do not take your valsartan until you see your doctor. Follow up with your primary care doctor.
+Planted mistake: None
+
+Experiments for template
+
+A. Filter checks
+Numbers only: precision 24.5%, recall 32.4%, F1 27.9%
+Medications only: precision 100.0%, recall 67.6%, F1 80.7%
+Both checks: precision 50.0%, recall 100.0%, F1 66.7%
+
+B. Error mix (both checks)
+Detectable types only: precision 50.0%, recall 100.0%, F1 66.7%
+All five types: precision 38.2%, recall 59.3%, F1 46.5%
+
+C. Error rate (both checks)
+10% error rate: precision 26.7%, recall 100.0%, F1 42.1%
+30% error rate: precision 50.0%, recall 100.0%, F1 66.7%
+50% error rate: precision 63.4%, recall 100.0%, F1 77.6%
+
+D. Cleaning (both checks)
+0% harmless-number rate: cleaning changed 147 of 500 summaries
+30% harmless-number rate: cleaning changed 246 of 500 summaries
+
+=== handwritten ===
+Saved 500 summaries to data\detectable_only\examples_handwritten.jsonl
+Example summary: You had diverticulitis, which is inflamation in your colon. Finish the amoxicillin 875 mg twice a day. Keep taking your sertraline. Stop taking celecoxib, it can irritate your gut.
+Planted mistake: None
+
+Experiments for handwritten
+
+A. Filter checks
+Numbers only: precision 21.8%, recall 29.2%, F1 24.9%
+Medications only: precision 100.0%, recall 70.8%, F1 82.9%
+Both checks: precision 48.8%, recall 100.0%, F1 65.6%
+
+B. Error mix (both checks)
+Detectable types only: precision 48.8%, recall 100.0%, F1 65.6%
+All five types: precision 40.2%, recall 60.4%, F1 48.2%
+
+C. Error rate (both checks)
+10% error rate: precision 20.1%, recall 100.0%, F1 33.5%
+30% error rate: precision 48.8%, recall 100.0%, F1 65.6%
+50% error rate: precision 59.6%, recall 100.0%, F1 74.7%
+
+D. Cleaning (both checks)
+0% harmless-number rate: cleaning changed 145 of 500 summaries
+30% harmless-number rate: cleaning changed 250 of 500 summaries
+
+=== llm ===
+Saved 500 summaries to data\detectable_only\examples_llm.jsonl
+Example summary: You were in the hospital for atrial fibrillation, an irregular and fast heartbeat. We started fluticasone 30 mg four times a day to slow your heart rate, and apixaban to lower your risk of stroke. Please continue taking levothyroxine. We stopped your atenolol. Please do not miss any doses of apixaban.
+Planted mistake: wrong_drug: 'diltiazem' changed to 'fluticasone'
+
+Experiments for llm
+
+A. Filter checks
+Numbers only: precision 21.5%, recall 28.1%, F1 24.3%
+Medications only: precision 100.0%, recall 71.9%, F1 83.7%
+Both checks: precision 49.3%, recall 100.0%, F1 66.1%
+
+B. Error mix (both checks)
+Detectable types only: precision 49.3%, recall 100.0%, F1 66.1%
+All five types: precision 37.9%, recall 60.9%, F1 46.7%
+
+C. Error rate (both checks)
+10% error rate: precision 19.2%, recall 100.0%, F1 32.3%
+30% error rate: precision 49.3%, recall 100.0%, F1 66.1%
+50% error rate: precision 61.1%, recall 100.0%, F1 75.9%
+
+D. Cleaning (both checks)
+0% harmless-number rate: cleaning changed 142 of 500 summaries
+30% harmless-number rate: cleaning changed 254 of 500 summaries
+
+Comparison of approaches (both checks)
+template: precision 50.0%, recall 100.0%, F1 66.7%
+handwritten: precision 48.8%, recall 100.0%, F1 65.6%
+llm: precision 49.3%, recall 100.0%, F1 66.1%
+
+Preset: meaning_only, count 500, seed 0
+Error rate: 30%, harmless-number rate: 30%
+Error types: wrong_diagnosis, negation
+
+=== template ===
+Saved 500 summaries to data\meaning_only\examples_template.jsonl
+Example summary: You came to the hospital because of diverticulitis. We gave you metronidazole 500 mg for 14 days. Continue your semaglutide at home. Do not take your valsartan until you see your doctor. Follow up with your primary care doctor.
+Planted mistake: None
+
+Experiments for template
+
+A. Filter checks
+Numbers only: precision 0.0%, recall 0.0%, F1 0.0%
+Medications only: precision 0.0%, recall 0.0%, F1 0.0%
+Both checks: precision 0.0%, recall 0.0%, F1 0.0%
+
+B. Error mix (both checks)
+Detectable types only: precision 50.0%, recall 100.0%, F1 66.7%
+All five types: precision 38.2%, recall 59.3%, F1 46.5%
+
+C. Error rate (both checks)
+10% error rate: precision 0.0%, recall 0.0%, F1 0.0%
+30% error rate: precision 0.0%, recall 0.0%, F1 0.0%
+50% error rate: precision 0.0%, recall 0.0%, F1 0.0%
+
+D. Cleaning (both checks)
+0% harmless-number rate: cleaning changed 0 of 500 summaries
+30% harmless-number rate: cleaning changed 136 of 500 summaries
+
+=== handwritten ===
+Saved 500 summaries to data\meaning_only\examples_handwritten.jsonl
+Example summary: You had diverticulitis, which is inflamation in your colon. Finish the amoxicillin 875 mg twice a day. Keep taking your sertraline. Stop taking celecoxib, it can irritate your gut.
+Planted mistake: None
+
+Experiments for handwritten
+
+A. Filter checks
+Numbers only: precision 0.0%, recall 0.0%, F1 0.0%
+Medications only: precision 0.0%, recall 0.0%, F1 0.0%
+Both checks: precision 0.0%, recall 0.0%, F1 0.0%
+
+B. Error mix (both checks)
+Detectable types only: precision 48.8%, recall 100.0%, F1 65.6%
+All five types: precision 40.2%, recall 60.4%, F1 48.2%
+
+C. Error rate (both checks)
+10% error rate: precision 0.0%, recall 0.0%, F1 0.0%
+30% error rate: precision 0.0%, recall 0.0%, F1 0.0%
+50% error rate: precision 0.0%, recall 0.0%, F1 0.0%
+
+D. Cleaning (both checks)
+0% harmless-number rate: cleaning changed 0 of 500 summaries
+30% harmless-number rate: cleaning changed 153 of 500 summaries
+
+=== llm ===
+Saved 500 summaries to data\meaning_only\examples_llm.jsonl
+Example summary: You were in the hospital for an asthma attack, an irregular and fast heartbeat. We started diltiazem 30 mg four times a day to slow your heart rate, and apixaban to lower your risk of stroke. Please continue taking levothyroxine. We stopped your atenolol. Please do not miss any doses of apixaban.
+Planted mistake: wrong_diagnosis: 'atrial fibrillation' changed to 'an asthma attack'
+
+Experiments for llm
+
+A. Filter checks
+Numbers only: precision 0.0%, recall 0.0%, F1 0.0%
+Medications only: precision 0.0%, recall 0.0%, F1 0.0%
+Both checks: precision 0.0%, recall 0.0%, F1 0.0%
+
+B. Error mix (both checks)
+Detectable types only: precision 49.3%, recall 100.0%, F1 66.1%
+All five types: precision 37.9%, recall 60.9%, F1 46.7%
+
+C. Error rate (both checks)
+10% error rate: precision 0.0%, recall 0.0%, F1 0.0%
+30% error rate: precision 0.0%, recall 0.0%, F1 0.0%
+50% error rate: precision 0.0%, recall 0.0%, F1 0.0%
+
+D. Cleaning (both checks)
+0% harmless-number rate: cleaning changed 0 of 500 summaries
+30% harmless-number rate: cleaning changed 152 of 500 summaries
+
+Comparison of approaches (both checks)
+template: precision 0.0%, recall 0.0%, F1 0.0%
+handwritten: precision 0.0%, recall 0.0%, F1 0.0%
+llm: precision 0.0%, recall 0.0%, F1 0.0%
+
+Preset: no_harmless, count 500, seed 0
+Error rate: 30%, harmless-number rate: 0%
+Error types: wrong_drug, added_drug, wrong_number, wrong_diagnosis, negation
+
+=== template ===
+Saved 500 summaries to data\no_harmless\examples_template.jsonl
+Example summary: You came to the hospital because of diverticulitis. We gave you metronidazole 500 mg for 14 days. Continue your semaglutide at home. Do not take your valsartan until you see your doctor. Follow up with your primary care doctor.
+Planted mistake: None
+
+Experiments for template
+
+A. Filter checks
+Numbers only: precision 100.0%, recall 18.1%, F1 30.7%
+Medications only: precision 100.0%, recall 38.4%, F1 55.5%
+Both checks: precision 100.0%, recall 56.5%, F1 72.2%
+
+B. Error mix (both checks)
+Detectable types only: precision 100.0%, recall 100.0%, F1 100.0%
+All five types: precision 100.0%, recall 56.5%, F1 72.2%
+
+C. Error rate (both checks)
+10% error rate: precision 100.0%, recall 75.0%, F1 85.7%
+30% error rate: precision 100.0%, recall 56.5%, F1 72.2%
+50% error rate: precision 100.0%, recall 59.0%, F1 74.2%
+
+D. Cleaning (both checks)
+0% harmless-number rate: cleaning changed 78 of 500 summaries
+30% harmless-number rate: cleaning changed 211 of 500 summaries
+
+=== handwritten ===
+Saved 500 summaries to data\no_harmless\examples_handwritten.jsonl
+Example summary: You had diverticulitis, which is inflamation in your colon. Finish the amoxicillin 875 mg twice a day. Keep taking your sertraline. Stop taking celecoxib, it can irritate your gut.
+Planted mistake: None
+
+Experiments for handwritten
+
+A. Filter checks
+Numbers only: precision 100.0%, recall 14.0%, F1 24.5%
+Medications only: precision 100.0%, recall 42.7%, F1 59.8%
+Both checks: precision 100.0%, recall 56.6%, F1 72.3%
+
+B. Error mix (both checks)
+Detectable types only: precision 100.0%, recall 100.0%, F1 100.0%
+All five types: precision 100.0%, recall 56.6%, F1 72.3%
+
+C. Error rate (both checks)
+10% error rate: precision 100.0%, recall 67.3%, F1 80.5%
+30% error rate: precision 100.0%, recall 56.6%, F1 72.3%
+50% error rate: precision 100.0%, recall 58.0%, F1 73.4%
+
+D. Cleaning (both checks)
+0% harmless-number rate: cleaning changed 81 of 500 summaries
+30% harmless-number rate: cleaning changed 214 of 500 summaries
+
+=== llm ===
+Saved 500 summaries to data\no_harmless\examples_llm.jsonl
+Example summary: You were in the hospital for atrial fibrillation, an irregular and fast heartbeat. We started diltiazem 30 mg four times a day to slow your heart rate, and apixaban to lower your risk of stroke. Please continue taking levothyroxine. We stopped your atenolol. Please do not miss any doses of apixaban. Start taking fluticasone every day.
+Planted mistake: added_drug: added 'Start taking fluticasone every day.'
+
+Experiments for llm
+
+A. Filter checks
+Numbers only: precision 100.0%, recall 14.1%, F1 24.7%
+Medications only: precision 100.0%, recall 42.3%, F1 59.4%
+Both checks: precision 100.0%, recall 56.3%, F1 72.1%
+
+B. Error mix (both checks)
+Detectable types only: precision 100.0%, recall 100.0%, F1 100.0%
+All five types: precision 100.0%, recall 56.3%, F1 72.1%
+
+C. Error rate (both checks)
+10% error rate: precision 100.0%, recall 72.9%, F1 84.3%
+30% error rate: precision 100.0%, recall 56.3%, F1 72.1%
+50% error rate: precision 100.0%, recall 59.5%, F1 74.6%
+
+D. Cleaning (both checks)
+0% harmless-number rate: cleaning changed 80 of 500 summaries
+30% harmless-number rate: cleaning changed 220 of 500 summaries
+
+Comparison of approaches (both checks)
+template: precision 100.0%, recall 56.5%, F1 72.2%
+handwritten: precision 100.0%, recall 56.6%, F1 72.3%
+llm: precision 100.0%, recall 56.3%, F1 72.1%
+
+Preset: many_harmless, count 500, seed 0
+Error rate: 30%, harmless-number rate: 60%
+Error types: wrong_drug, added_drug, wrong_number, wrong_diagnosis, negation
+
+=== template ===
+Saved 500 summaries to data\many_harmless\examples_template.jsonl
+Example summary: You came to the hospital because of diverticulitis. We gave you metronidazole 500 mg for 14 days. Continue your semaglutide at home. Do not take your valsartan until you see your doctor. Follow up with your primary care doctor.
+Planted mistake: None
+
+Experiments for template
+
+A. Filter checks
+Numbers only: precision 11.1%, recall 25.0%, F1 15.4%
+Medications only: precision 100.0%, recall 36.1%, F1 53.1%
+Both checks: precision 23.4%, recall 61.1%, F1 33.8%
+
+B. Error mix (both checks)
+Detectable types only: precision 31.6%, recall 100.0%, F1 48.0%
+All five types: precision 23.4%, recall 61.1%, F1 33.8%
+
+C. Error rate (both checks)
+10% error rate: precision 11.1%, recall 66.7%, F1 19.0%
+30% error rate: precision 23.4%, recall 61.1%, F1 33.8%
+50% error rate: precision 33.6%, recall 59.1%, F1 42.8%
+
+D. Cleaning (both checks)
+0% harmless-number rate: cleaning changed 78 of 500 summaries
+30% harmless-number rate: cleaning changed 211 of 500 summaries
+
+=== handwritten ===
+Saved 500 summaries to data\many_harmless\examples_handwritten.jsonl
+Example summary: You had diverticulitis, which is inflamation in your colon. Finish the amoxicillin 875 mg twice a day. Keep taking your sertraline. Stop taking celecoxib, it can irritate your gut. Call 911 if you feel faint or confused.
+Planted mistake: None
+
+Experiments for handwritten
+
+A. Filter checks
+Numbers only: precision 10.9%, recall 22.4%, F1 14.6%
+Medications only: precision 100.0%, recall 35.4%, F1 52.3%
+Both checks: precision 24.0%, recall 57.8%, F1 33.9%
+
+B. Error mix (both checks)
+Detectable types only: precision 33.3%, recall 100.0%, F1 50.0%
+All five types: precision 24.0%, recall 57.8%, F1 33.9%
+
+C. Error rate (both checks)
+10% error rate: precision 10.8%, recall 65.5%, F1 18.6%
+30% error rate: precision 24.0%, recall 57.8%, F1 33.9%
+50% error rate: precision 35.5%, recall 61.4%, F1 45.0%
+
+D. Cleaning (both checks)
+0% harmless-number rate: cleaning changed 81 of 500 summaries
+30% harmless-number rate: cleaning changed 214 of 500 summaries
+
+=== llm ===
+Saved 500 summaries to data\many_harmless\examples_llm.jsonl
+Example summary: You were in the hospital for atrial fibrillation, an irregular and fast heartbeat. We started diltiazem 30 mg four times a day to slow your heart rate, and apixaban to lower your risk of stroke. Please continue taking levothyroxine. We stopped your atenolol. Please do not miss any doses of apixaban. Start taking fluticasone every day. Call 911 if you feel faint or confused.
+Planted mistake: added_drug: added 'Start taking fluticasone every day.'
+
+Experiments for llm
+
+A. Filter checks
+Numbers only: precision 10.2%, recall 20.5%, F1 13.6%
+Medications only: precision 100.0%, recall 36.6%, F1 53.6%
+Both checks: precision 24.1%, recall 57.1%, F1 33.9%
+
+B. Error mix (both checks)
+Detectable types only: precision 33.0%, recall 100.0%, F1 49.7%
+All five types: precision 24.1%, recall 57.1%, F1 33.9%
+
+C. Error rate (both checks)
+10% error rate: precision 12.3%, recall 71.9%, F1 21.0%
+30% error rate: precision 24.1%, recall 57.1%, F1 33.9%
+50% error rate: precision 35.5%, recall 59.8%, F1 44.5%
+
+D. Cleaning (both checks)
+0% harmless-number rate: cleaning changed 80 of 500 summaries
+30% harmless-number rate: cleaning changed 220 of 500 summaries
+
+Comparison of approaches (both checks)
+template: precision 23.4%, recall 61.1%, F1 33.8%
+handwritten: precision 24.0%, recall 57.8%, F1 33.9%
+llm: precision 24.1%, recall 57.1%, F1 33.9%
+
+Preset: clean_control, count 500, seed 0
+Error rate: 0%, harmless-number rate: 0%
+Error types: wrong_drug, added_drug, wrong_number, wrong_diagnosis, negation
+
+=== template ===
+Saved 500 summaries to data\clean_control\examples_template.jsonl
+Example summary: You came to the hospital because of diverticulitis. We gave you metronidazole 500 mg for 14 days. Continue your semaglutide at home. Do not take your valsartan until you see your doctor. Follow up with your primary care doctor.
+Planted mistake: None
+
+Experiments for template
+
+A. Filter checks
+Numbers only: precision 0.0%, recall 0.0%, F1 0.0%
+Medications only: precision 0.0%, recall 0.0%, F1 0.0%
+Both checks: precision 0.0%, recall 0.0%, F1 0.0%
+
+B. Error mix (both checks)
+Detectable types only: precision 0.0%, recall 0.0%, F1 0.0%
+All five types: precision 0.0%, recall 0.0%, F1 0.0%
+
+C. Error rate (both checks)
+10% error rate: precision 100.0%, recall 75.0%, F1 85.7%
+30% error rate: precision 100.0%, recall 56.5%, F1 72.2%
+50% error rate: precision 100.0%, recall 59.0%, F1 74.2%
+
+D. Cleaning (both checks)
+0% harmless-number rate: cleaning changed 0 of 500 summaries
+30% harmless-number rate: cleaning changed 137 of 500 summaries
+
+=== handwritten ===
+Saved 500 summaries to data\clean_control\examples_handwritten.jsonl
+Example summary: You had diverticulitis, which is inflamation in your colon. Finish the amoxicillin 875 mg twice a day. Keep taking your sertraline. Stop taking celecoxib, it can irritate your gut.
+Planted mistake: None
+
+Experiments for handwritten
+
+A. Filter checks
+Numbers only: precision 0.0%, recall 0.0%, F1 0.0%
+Medications only: precision 0.0%, recall 0.0%, F1 0.0%
+Both checks: precision 0.0%, recall 0.0%, F1 0.0%
+
+B. Error mix (both checks)
+Detectable types only: precision 0.0%, recall 0.0%, F1 0.0%
+All five types: precision 0.0%, recall 0.0%, F1 0.0%
+
+C. Error rate (both checks)
+10% error rate: precision 100.0%, recall 67.3%, F1 80.5%
+30% error rate: precision 100.0%, recall 56.6%, F1 72.3%
+50% error rate: precision 100.0%, recall 58.0%, F1 73.4%
+
+D. Cleaning (both checks)
+0% harmless-number rate: cleaning changed 0 of 500 summaries
+30% harmless-number rate: cleaning changed 149 of 500 summaries
+
+=== llm ===
+Saved 500 summaries to data\clean_control\examples_llm.jsonl
+Example summary: You were in the hospital for atrial fibrillation, an irregular and fast heartbeat. We started diltiazem 30 mg four times a day to slow your heart rate, and apixaban to lower your risk of stroke. Please continue taking levothyroxine. We stopped your atenolol. Please do not miss any doses of apixaban.
+Planted mistake: None
+
+Experiments for llm
+
+A. Filter checks
+Numbers only: precision 0.0%, recall 0.0%, F1 0.0%
+Medications only: precision 0.0%, recall 0.0%, F1 0.0%
+Both checks: precision 0.0%, recall 0.0%, F1 0.0%
+
+B. Error mix (both checks)
+Detectable types only: precision 0.0%, recall 0.0%, F1 0.0%
+All five types: precision 0.0%, recall 0.0%, F1 0.0%
+
+C. Error rate (both checks)
+10% error rate: precision 100.0%, recall 72.9%, F1 84.3%
+30% error rate: precision 100.0%, recall 56.3%, F1 72.1%
+50% error rate: precision 100.0%, recall 59.5%, F1 74.6%
+
+D. Cleaning (both checks)
+0% harmless-number rate: cleaning changed 0 of 500 summaries
+30% harmless-number rate: cleaning changed 147 of 500 summaries
+
+Comparison of approaches (both checks)
+template: precision 0.0%, recall 0.0%, F1 0.0%
+handwritten: precision 0.0%, recall 0.0%, F1 0.0%
+llm: precision 0.0%, recall 0.0%, F1 0.0%

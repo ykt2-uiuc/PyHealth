@@ -1,0 +1,98 @@
+[
+  {
+    "context": "The patient is a 59-year-old man who presented with three days of productive cough and fever and was diagnosed with community-acquired pneumonia. He was started on doxycycline 100 mg twice daily, and his oxygen levels steadily improved. His home rosuvastatin was continued throughout the stay. His home metoprolol was stopped because of a persistently low heart rate. He was discharged in stable condition.",
+    "summary": "You were admitted to the hospital with pneumonia, an infection of the lungs. We treated you with doxycycline 100 mg twice a day, and your breathing improved. Please continue taking rosuvastatin as before. We stopped your metoprolol because your heart rate was low. Please follow up with your primary care doctor.",
+    "diagnosis": "pneumonia",
+    "treatment_drug": "doxycycline",
+    "dose": "100",
+    "stopped_drug": "metoprolol"
+  },
+  {
+    "context": "The patient is a 47-year-old woman who presented with redness, warmth, and swelling of the right forearm consistent with cellulitis. She was treated with doxycycline 100 mg twice daily, and the area of redness decreased each day. Her home sertraline was continued. Her home meloxicam was discontinued to reduce the risk of kidney injury. She was discharged home in good condition.",
+    "summary": "You were treated in the hospital for cellulitis, an infection of the skin on your arm. You received doxycycline 100 mg twice a day, and the redness improved. Please keep taking your sertraline. We have stopped your meloxicam to protect your kidneys. Watch the area and contact your doctor if the redness spreads.",
+    "diagnosis": "cellulitis",
+    "treatment_drug": "doxycycline",
+    "dose": "100",
+    "stopped_drug": "meloxicam"
+  },
+  {
+    "context": "The patient is a 71-year-old woman who presented with burning on urination and new confusion and was diagnosed with a urinary tract infection. She was started on nitrofurantoin 100 mg twice daily, and her mental status returned to baseline. Her home losartan was continued. Her home oxybutynin was stopped because it can contribute to confusion in older adults. She was discharged to home with family.",
+    "summary": "You came to the hospital because of a urinary tract infection, which also caused some confusion. We treated you with nitrofurantoin 100 mg twice a day, and your thinking cleared. Please continue taking losartan. We stopped your oxybutynin because it can worsen confusion. Please finish all of your antibiotic.",
+    "diagnosis": "a urinary tract infection",
+    "treatment_drug": "nitrofurantoin",
+    "dose": "100",
+    "stopped_drug": "oxybutynin"
+  },
+  {
+    "context": "The patient is a 76-year-old man with a history of heart failure who was admitted for a heart failure exacerbation with leg swelling and shortness of breath. He was diuresed with furosemide 40 mg twice daily and lost significant fluid weight. His home spironolactone was continued. His home diltiazem was stopped because it can worsen heart failure. He was discharged with improved breathing.",
+    "summary": "You were in the hospital for a heart failure exacerbation, when extra fluid builds up in the body. We gave you furosemide 40 mg to remove the extra fluid, and your breathing improved. Please continue taking spironolactone. We stopped your diltiazem because it can make heart failure worse. Please weigh yourself each morning.",
+    "diagnosis": "a heart failure exacerbation",
+    "treatment_drug": "furosemide",
+    "dose": "40",
+    "stopped_drug": "diltiazem"
+  },
+  {
+    "context": "The patient is a 66-year-old woman with chronic lung disease who was admitted for a COPD exacerbation with increased wheezing and cough. She was treated with prednisone 40 mg daily for five days along with inhaled bronchodilators. Her home tiotropium was continued. Her home propranolol was discontinued because it can narrow the airways. She was discharged on room air.",
+    "summary": "You were admitted for a COPD exacerbation, a flare of your chronic lung disease. We treated you with prednisone 40 mg each day and breathing treatments. Please continue your tiotropium inhaler. We stopped your propranolol because it can make breathing harder. Please avoid smoke and other lung irritants.",
+    "diagnosis": "a COPD exacerbation",
+    "treatment_drug": "prednisone",
+    "dose": "40",
+    "stopped_drug": "propranolol"
+  },
+  {
+    "context": "The patient is a 54-year-old man who presented with left lower abdominal pain and fever, and imaging confirmed diverticulitis. He was treated with metronidazole 500 mg three times daily along with a second antibiotic and a clear liquid diet. His home pravastatin was continued. His home ibuprofen was stopped because it can irritate the bowel. He was discharged tolerating a regular diet.",
+    "summary": "You were treated in the hospital for diverticulitis, an inflammation of small pouches in your colon. You are taking metronidazole 500 mg three times a day. Please continue taking pravastatin. We stopped your ibuprofen because it can irritate the bowel. Please slowly return to your normal diet.",
+    "diagnosis": "diverticulitis",
+    "treatment_drug": "metronidazole",
+    "dose": "500",
+    "stopped_drug": "ibuprofen"
+  },
+  {
+    "context": "The patient is a 69-year-old woman who presented with palpitations and was found to be in atrial fibrillation with a rapid heart rate. Her heart rate was controlled with diltiazem 30 mg four times daily, and she was started on apixaban to prevent stroke. Her home levothyroxine was continued. Her home atenolol was stopped and replaced by diltiazem. She was discharged with a controlled heart rate.",
+    "summary": "You were in the hospital for atrial fibrillation, an irregular and fast heartbeat. We started diltiazem 30 mg four times a day to slow your heart rate, and apixaban to lower your risk of stroke. Please continue taking levothyroxine. We stopped your atenolol. Please do not miss any doses of apixaban.",
+    "diagnosis": "atrial fibrillation",
+    "treatment_drug": "diltiazem",
+    "dose": "30",
+    "stopped_drug": "atenolol"
+  },
+  {
+    "context": "The patient is an 82-year-old man who presented with several days of poor oral intake and dizziness and was found to have dehydration. He received intravenous fluids and ondansetron 4 mg as needed for nausea. His home tamsulosin was continued. His home hydrochlorothiazide was stopped because it was contributing to fluid loss. He was discharged after his kidney function improved.",
+    "summary": "You were admitted to the hospital for dehydration, which means your body did not have enough fluid. We gave you fluids through a vein and ondansetron 4 mg for nausea. Please continue taking tamsulosin. We stopped your hydrochlorothiazide because it was making you lose fluid. Please drink plenty of water.",
+    "diagnosis": "dehydration",
+    "treatment_drug": "ondansetron",
+    "dose": "4",
+    "stopped_drug": "hydrochlorothiazide"
+  },
+  {
+    "context": "The patient is a 38-year-old man who presented with severe right flank pain and blood in the urine, and imaging showed a kidney stone. His pain was controlled, and he was started on tamsulosin 0.4 mg daily to help the stone pass. His home omeprazole was continued. His home ibuprofen was stopped because of a temporary rise in creatinine. He was discharged with a urine strainer.",
+    "summary": "You came to the hospital because of a kidney stone. We started tamsulosin 0.4 mg once a day to help the stone pass. Please continue taking omeprazole. We stopped your ibuprofen because your kidney tests were slightly abnormal. Please strain your urine and bring any stone to your doctor.",
+    "diagnosis": "a kidney stone",
+    "treatment_drug": "tamsulosin",
+    "dose": "0.4",
+    "stopped_drug": "ibuprofen"
+  },
+  {
+    "context": "The patient is a 52-year-old woman who presented with severe upper abdominal pain and elevated lipase and was diagnosed with pancreatitis. She was managed with bowel rest, intravenous fluids, and ondansetron 4 mg for nausea, and her diet was advanced as tolerated. Her home escitalopram was continued. Her home fenofibrate was stopped pending outpatient review. She was discharged tolerating a low-fat diet.",
+    "summary": "You were admitted for pancreatitis, an inflammation of the pancreas. We treated you with fluids, rest for your stomach, and ondansetron 4 mg for nausea. Please continue taking escitalopram. We stopped your fenofibrate until your doctor reviews it. Please follow a low-fat diet and avoid alcohol.",
+    "diagnosis": "pancreatitis",
+    "treatment_drug": "ondansetron",
+    "dose": "4",
+    "stopped_drug": "fenofibrate"
+  },
+  {
+    "context": "The patient is a 61-year-old man who presented with a painful, swollen right big toe consistent with a gout flare. He was treated with prednisone 40 mg daily, and the pain improved substantially. His home allopurinol was continued. His home hydrochlorothiazide was stopped because it can raise uric acid. He was discharged walking comfortably.",
+    "summary": "You were treated in the hospital for a gout flare in your big toe. We gave you prednisone 40 mg each day, and your pain improved. Please continue taking allopurinol. We stopped your hydrochlorothiazide because it can trigger gout. Please drink plenty of water and limit alcohol.",
+    "diagnosis": "a gout flare",
+    "treatment_drug": "prednisone",
+    "dose": "40",
+    "stopped_drug": "hydrochlorothiazide"
+  },
+  {
+    "context": "The patient is a 29-year-old woman with asthma who presented with wheezing and shortness of breath and was admitted for an asthma attack. She was treated with prednisone 40 mg daily and frequent albuterol treatments. Her home montelukast was continued. Her home propranolol was stopped because it can trigger bronchospasm. She was discharged with improved breathing.",
+    "summary": "You were in the hospital for an asthma attack. We treated you with prednisone 40 mg each day and albuterol breathing treatments. Please continue taking montelukast and use albuterol as needed. We stopped your propranolol because it can trigger asthma. Please follow up with your doctor.",
+    "diagnosis": "an asthma attack",
+    "treatment_drug": "prednisone",
+    "dose": "40",
+    "stopped_drug": "propranolol"
+  }
+]
