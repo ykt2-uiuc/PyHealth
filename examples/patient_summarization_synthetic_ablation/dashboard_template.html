@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unsupported-fact filter: grid search results</title>
+<style>
+  :root {
+    color-scheme: light;
+    --surface: #ffffff;
+    --surface-raised: #f6f6f6;
+    --border: #e2e2e2;
+    --text-primary: #191919;
+    --text-secondary: #666666;
+    --accent: #257de0;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+      --surface: #191919;
+      --surface-raised: #232323;
+      --border: #383838;
+      --text-primary: #efefef;
+      --text-secondary: #9c9c9c;
+      --accent: #338ced;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 20px;
+    background: var(--surface);
+    color: var(--text-primary);
+    font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  h2 { font-size: 16px; margin: 28px 0 8px; }
+  .subtitle, .note { color: var(--text-secondary); margin: 0 0 12px; }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    padding: 12px;
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+  .controls label { display: flex; flex-direction: column; font-size: 12px; color: var(--text-secondary); gap: 3px; }
+  .controls select {
+    font: inherit;
+    font-size: 13px;
+    color: var(--text-primary);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 6px;
+    min-width: 120px;
+  }
+  .controls .divider { width: 1px; background: var(--border); align-self: stretch; }
+  @media (max-width: 700px) {
+    body { padding: 14px; }
+    .controls { position: static; display: grid; grid-template-columns: 1fr 1fr; }
+    .controls select { min-width: 0; width: 100%; }
+    .controls .divider { display: none; }
+  }
+  .scroll { overflow-x: auto; }
+  table { border-collapse: separate; border-spacing: 2px; }
+  th, td { padding: 6px 8px; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  th { font-weight: 600; color: var(--text-secondary); font-size: 12px; }
+  th:first-child, td:first-child, th.text-column, td.text-column { text-align: left; }
+  .heatmap td.cell { border-radius: 4px; min-width: 78px; text-align: center; cursor: default; }
+  .heatmap td.empty { color: var(--text-secondary); text-align: center; }
+  .legend { display: flex; align-items: center; gap: 8px; margin: 8px 0 0; color: var(--text-secondary); font-size: 12px; }
+  .legend .ramp { display: flex; }
+  .legend .ramp span { width: 26px; height: 12px; }
+  .legend .ramp span:first-child { border-radius: 3px 0 0 3px; }
+  .legend .ramp span:last-child { border-radius: 0 3px 3px 0; }
+  .runs th { cursor: pointer; user-select: none; }
+  .runs th.sorted { color: var(--text-primary); }
+  .runs tbody tr:nth-child(odd) td { background: var(--surface-raised); }
+  .runs td.metric-chosen { font-weight: 600; }
+  #tooltip {
+    position: fixed;
+    pointer-events: none;
+    background: var(--surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 12px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    display: none;
+    z-index: 5;
+  }
+</style>
+</head>
+<body>
+<h1>Unsupported-fact filter: grid search results</h1>
+<p class="subtitle" id="subtitle"></p>
+
+<div class="controls" id="controls"></div>
+
+<h2 id="heatmap-title"></h2>
+<p class="note" id="heatmap-note"></p>
+<div class="scroll"><table class="heatmap" id="heatmap"></table></div>
+<div class="legend" id="legend"></div>
+
+<h2>Best 10 settings for the chosen metric</h2>
+<div class="scroll"><table class="runs" id="best-table"></table></div>
+
+<h2 id="all-runs-title"></h2>
+<p class="note">Click a column header to sort.</p>
+<div class="scroll"><table class="runs" id="runs-table"></table></div>
+
+<div id="tooltip"></div>
+
+<script>
+const RUNS = __RUNS_DATA__;
+
+const SETTING_COLUMNS = ["approach", "filter", "error_types", "error_rate", "errors_per_summary", "harmless_rate"];
+const METRICS = {
+  f1: { label: "F1", higherIsBetter: true, isShare: true },
+  precision: { label: "Precision", higherIsBetter: true, isShare: true },
+  recall: { label: "Recall", higherIsBetter: true, isShare: true },
+  error_sentences_removed: { label: "Error sentences removed", higherIsBetter: true, isShare: true },
+  correct_sentences_removed: { label: "Correct sentences removed", higherIsBetter: false, isShare: true },
+  spurious: { label: "False alarms (count)", higherIsBetter: false, isShare: false },
+  missed: { label: "Missed errors (count)", higherIsBetter: false, isShare: false },
+};
+const TABLE_COLUMNS = SETTING_COLUMNS.concat(["precision", "recall", "f1", "correct", "partial", "spurious", "missed", "error_sentences_removed", "correct_sentences_removed"]);
+const TEXT_COLUMNS = ["approach", "filter", "error_types"];
+const SHARE_COLUMNS = ["precision", "recall", "f1", "error_sentences_removed", "correct_sentences_removed", "error_rate", "harmless_rate"];
+const BLUE_RAMP = ["#cce3fd", "#b6d5f8", "#9dc8f7", "#84b9f3", "#6aabf1", "#519ced", "#338ced", "#257de0", "#2370cd", "#1b64be", "#1757ac", "#0f4a96", "#0e3d7e"];
+const MAXIMUM_TABLE_ROWS = 300;
+
+const state = {
+  filters: Object.fromEntries(SETTING_COLUMNS.map((column) => [column, "all"])),
+  metric: "f1",
+  heatmapRows: "error_types",
+  heatmapColumns: "filter",
+  sortColumn: "f1",
+  sortDescending: true,
+};
+
+function uniqueValues(column) {
+  const values = [...new Set(RUNS.map((run) => run[column]))];
+  return values.sort((first, second) => (typeof first === "number" ? first - second : 0));
+}
+
+function formatValue(column, value) {
+  if (value === null || value === undefined || Number.isNaN(value)) return "–";
+  if (SHARE_COLUMNS.includes(column)) return (100 * value).toFixed(column.endsWith("_rate") ? 0 : 1) + "%";
+  if (typeof value === "number" && !Number.isInteger(value)) return value.toFixed(1);
+  return String(value);
+}
+
+function filteredRuns() {
+  return RUNS.filter((run) => SETTING_COLUMNS.every((column) => state.filters[column] === "all" || String(run[column]) === state.filters[column]));
+}
+
+function makeSelect(labelText, options, currentValue, onChange) {
+  const label = document.createElement("label");
+  label.textContent = labelText;
+  const select = document.createElement("select");
+  for (const option of options) {
+    const element = document.createElement("option");
+    element.value = option.value;
+    element.textContent = option.text;
+    if (option.value === currentValue) element.selected = true;
+    select.appendChild(element);
+  }
+  select.addEventListener("change", () => onChange(select.value));
+  label.appendChild(select);
+  return label;
+}
+
+function buildControls() {
+  const controls = document.getElementById("controls");
+  for (const column of SETTING_COLUMNS) {
+    const options = [{ value: "all", text: "All" }].concat(uniqueValues(column).map((value) => ({ value: String(value), text: formatValue(column, value) })));
+    controls.appendChild(makeSelect(column.replaceAll("_", " "), options, "all", (value) => { state.filters[column] = value; render(); }));
+  }
+  const divider = document.createElement("div");
+  divider.className = "divider";
+  controls.appendChild(divider);
+  const metricOptions = Object.entries(METRICS).map(([value, metric]) => ({ value, text: metric.label }));
+  controls.appendChild(makeSelect("metric", metricOptions, state.metric, (value) => { state.metric = value; state.sortColumn = value; state.sortDescending = METRICS[value].higherIsBetter; render(); }));
+  const dimensionOptions = SETTING_COLUMNS.map((column) => ({ value: column, text: column.replaceAll("_", " ") }));
+  controls.appendChild(makeSelect("heatmap rows", dimensionOptions, state.heatmapRows, (value) => { state.heatmapRows = value; render(); }));
+  controls.appendChild(makeSelect("heatmap columns", dimensionOptions, state.heatmapColumns, (value) => { state.heatmapColumns = value; render(); }));
+}
+
+function rampColor(share) {
+  const index = Math.max(0, Math.min(BLUE_RAMP.length - 1, Math.round(share * (BLUE_RAMP.length - 1))));
+  return { background: BLUE_RAMP[index], text: index >= 6 ? "#ffffff" : "#191919" };
+}
+
+function average(values) {
+  return values.reduce((total, value) => total + value, 0) / values.length;
+}
+
+function renderHeatmap(runs) {
+  const metric = METRICS[state.metric];
+  const rowValues = uniqueValues(state.heatmapRows);
+  const columnValues = uniqueValues(state.heatmapColumns);
+  const cellValues = {};
+  for (const rowValue of rowValues) {
+    for (const columnValue of columnValues) {
+      const matchingRuns = runs.filter((run) => run[state.heatmapRows] === rowValue && run[state.heatmapColumns] === columnValue);
+      const values = matchingRuns.map((run) => run[state.metric]).filter((value) => value !== null);
+      cellValues[rowValue + "|" + columnValue] = values.length ? { mean: average(values), count: values.length } : null;
+    }
+  }
+  const allMeans = Object.values(cellValues).filter(Boolean).map((cell) => cell.mean);
+  const largest = metric.isShare ? 1 : Math.max(1, ...allMeans);
+
+  document.getElementById("heatmap-title").textContent = `Average ${metric.label} by ${state.heatmapRows.replaceAll("_", " ")} and ${state.heatmapColumns.replaceAll("_", " ")}`;
+  document.getElementById("heatmap-note").textContent = `Each cell averages the matching runs for the filters above. ${metric.higherIsBetter ? "Higher is better." : "Lower is better."} Hover a cell for the number of runs. Precision is left blank (–) for runs where the filter flagged nothing.`;
+
+  const table = document.getElementById("heatmap");
+  table.innerHTML = "";
+  const headerRow = table.insertRow();
+  headerRow.appendChild(Object.assign(document.createElement("th"), { textContent: state.heatmapRows.replaceAll("_", " ") }));
+  for (const columnValue of columnValues) {
+    headerRow.appendChild(Object.assign(document.createElement("th"), { textContent: formatValue(state.heatmapColumns, columnValue) }));
+  }
+  for (const rowValue of rowValues) {
+    const row = table.insertRow();
+    row.appendChild(Object.assign(document.createElement("th"), { textContent: formatValue(state.heatmapRows, rowValue) }));
+    for (const columnValue of columnValues) {
+      const cell = row.insertCell();
+      const cellValue = cellValues[rowValue + "|" + columnValue];
+      if (!cellValue) {
+        cell.className = "empty";
+        cell.textContent = "–";
+        continue;
+      }
+      const colors = rampColor(cellValue.mean / largest);
+      cell.className = "cell";
+      cell.style.background = colors.background;
+      cell.style.color = colors.text;
+      cell.textContent = formatValue(state.metric, cellValue.mean);
+      cell.addEventListener("mousemove", (event) => showTooltip(event, `<b>${formatValue(state.heatmapRows, rowValue)}</b> · <b>${formatValue(state.heatmapColumns, columnValue)}</b><br>${metric.label}: ${formatValue(state.metric, cellValue.mean)}<br>${cellValue.count} runs averaged`));
+      cell.addEventListener("mouseleave", hideTooltip);
+    }
+  }
+
+  const legend = document.getElementById("legend");
+  const rampSteps = BLUE_RAMP.map((color) => `<span style="background:${color}"></span>`).join("");
+  legend.innerHTML = `<span>${metric.isShare ? "0%" : "0"}</span><span class="ramp">${rampSteps}</span><span>${metric.isShare ? "100%" : formatValue(state.metric, largest)}</span>`;
+}
+
+function renderRunsTable(tableId, runs, highlightMetric, sortable) {
+  const table = document.getElementById(tableId);
+  table.innerHTML = "";
+  const header = table.createTHead().insertRow();
+  for (const column of TABLE_COLUMNS) {
+    const headerCell = document.createElement("th");
+    const arrow = sortable && state.sortColumn === column ? (state.sortDescending ? " ▼" : " ▲") : "";
+    headerCell.textContent = column.replaceAll("_", " ") + arrow;
+    if (TEXT_COLUMNS.includes(column)) headerCell.classList.add("text-column");
+    if (sortable) {
+      if (state.sortColumn === column) headerCell.classList.add("sorted");
+      headerCell.addEventListener("click", () => {
+        state.sortDescending = state.sortColumn === column ? !state.sortDescending : true;
+        state.sortColumn = column;
+        render();
+      });
+    }
+    header.appendChild(headerCell);
+  }
+  const body = table.createTBody();
+  for (const run of runs) {
+    const row = body.insertRow();
+    for (const column of TABLE_COLUMNS) {
+      const cell = row.insertCell();
+      cell.textContent = formatValue(column, run[column]);
+      if (TEXT_COLUMNS.includes(column)) cell.classList.add("text-column");
+      if (column === highlightMetric) cell.classList.add("metric-chosen");
+    }
+  }
+}
+
+function sortedRuns(runs, column, descending) {
+  return [...runs].sort((first, second) => {
+    const firstValue = first[column];
+    const secondValue = second[column];
+    if (firstValue === null && secondValue === null) return 0;
+    if (firstValue === null) return 1;
+    if (secondValue === null) return -1;
+    const comparison = typeof firstValue === "number" ? firstValue - secondValue : String(firstValue).localeCompare(String(secondValue));
+    return descending ? -comparison : comparison;
+  });
+}
+
+function render() {
+  const runs = filteredRuns();
+  document.getElementById("subtitle").textContent = `${runs.length} of ${RUNS.length} runs match the filters. Each run scores one filter setting on ${RUNS[0].records} synthetic summaries.`;
+  renderHeatmap(runs);
+  const metric = METRICS[state.metric];
+  const bestRuns = sortedRuns(runs.filter((run) => run.filter !== "no_filter"), state.metric, metric.higherIsBetter).slice(0, 10);
+  renderRunsTable("best-table", bestRuns, state.metric, false);
+  const allSorted = sortedRuns(runs, state.sortColumn, state.sortDescending);
+  const shownRuns = allSorted.slice(0, MAXIMUM_TABLE_ROWS);
+  document.getElementById("all-runs-title").textContent = runs.length > MAXIMUM_TABLE_ROWS ? `All matching runs (first ${MAXIMUM_TABLE_ROWS} of ${runs.length}; narrow the filters to see the rest)` : `All matching runs (${runs.length})`;
+  renderRunsTable("runs-table", shownRuns, state.metric, true);
+}
+
+const tooltip = document.getElementById("tooltip");
+function showTooltip(event, html) {
+  tooltip.innerHTML = html;
+  tooltip.style.display = "block";
+  const tooltipWidth = tooltip.offsetWidth;
+  const left = event.clientX + 14 + tooltipWidth > window.innerWidth ? event.clientX - tooltipWidth - 14 : event.clientX + 14;
+  tooltip.style.left = left + "px";
+  tooltip.style.top = event.clientY + 14 + "px";
+}
+function hideTooltip() {
+  tooltip.style.display = "none";
+}
+
+buildControls();
+render();
+</script>
+</body>
+</html>

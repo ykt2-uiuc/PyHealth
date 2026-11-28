@@ -1,0 +1,23 @@
+diagnosis,treatment_drug,dose_mg
+pneumonia,azithromycin,500
+pneumonia,doxycycline,100
+pneumonia,amoxicillin,1000
+cellulitis,cephalexin,500
+cellulitis,doxycycline,100
+a urinary tract infection,cephalexin,500
+a urinary tract infection,nitrofurantoin,100
+a heart failure exacerbation,furosemide,40
+a heart failure exacerbation,spironolactone,25
+a COPD exacerbation,prednisone,40
+a COPD exacerbation,azithromycin,250
+diverticulitis,amoxicillin,875
+diverticulitis,metronidazole,500
+atrial fibrillation,metoprolol,25
+atrial fibrillation,diltiazem,30
+atrial fibrillation,apixaban,5
+dehydration,ondansetron,4
+a kidney stone,tamsulosin,0.4
+pancreatitis,ondansetron,4
+a gout flare,prednisone,40
+a gout flare,colchicine,0.6
+an asthma attack,prednisone,40
