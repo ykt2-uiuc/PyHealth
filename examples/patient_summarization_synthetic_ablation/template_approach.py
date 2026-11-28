@@ -1,20 +1,36 @@
+# Author: Jonathan Temkin
+# NetID: jtemkin3
+# Paper: Hegselmann et al., "A Data-Centric Approach To Generate Faithful and
+#     High Quality Patient Summaries with Large Language Models", CHIL 2024.
+#     https://arxiv.org/abs/2402.15422
+# Description: The template approach: clean pairs built from sentence
+#     templates filled with a diagnosis, drugs, a dose and a number of days.
+
+import random
+
 from vocabulary import DAYS, DIAGNOSIS_DRUG_ROWS, DRUGS
+
+
+#this file builds the clean pairs using sentence templates and the word lists from vocabulary (this is the hybrid approach).
+#this gives us an unlimited amount of data but its all written in the same style
+
+
+#this file implements the template approach for data generation, which uses predefined phrases with keyword switching to generat ethe data.
 
 ADMISSION_PHRASINGS = [
     "Patient was admitted with {diagnosis}.",
     "Patient presented to the hospital and was found to have {diagnosis}.",
     "Admitted for management of {diagnosis}.",
 ]
-
 TREATMENT_PHRASINGS = [
     "Treated with {treatment_drug} {dose} mg daily for {days} days with improvement.",
     "Started on {treatment_drug} {dose} mg and completed a {days} day course.",
     "Received {treatment_drug} {dose} mg for {days} days and symptoms resolved.",
 ]
-
 HOME_DRUG_PHRASINGS = [
     "Home {home_drug} was continued.",
     "Continued on home {home_drug}.",
+    "went home when completed rec {home_drug}"
 ]
 
 STOPPED_DRUG_PHRASINGS = [
@@ -24,6 +40,7 @@ STOPPED_DRUG_PHRASINGS = [
 
 SUMMARY_DIAGNOSIS_PHRASINGS = [
     "You were in the hospital for {diagnosis}.",
+    "patient had {diagnosis}",
     "You came to the hospital because of {diagnosis}.",
 ]
 
@@ -35,6 +52,7 @@ SUMMARY_TREATMENT_PHRASINGS = [
 SUMMARY_HOME_DRUG_PHRASINGS = [
     "Please keep taking your {home_drug}.",
     "Continue your {home_drug} at home.",
+    "take {home_drug} going foward"
 ]
 
 SUMMARY_STOPPED_DRUG_PHRASINGS = [
@@ -44,11 +62,14 @@ SUMMARY_STOPPED_DRUG_PHRASINGS = [
 
 SUMMARY_CLOSING_PHRASINGS = [
     "Follow up with your primary care doctor.",
+    "see your doctor for further questions",
     "Please see your doctor at your next appointment.",
 ]
 
 
-def create_clean_pair(random_generator):
+#this fills the sentence templates with a diagnosis, drugs and dose to make one clean pair
+def create_clean_pair(random_generator: random.Random) -> dict:
+    """Builds one clean pair from the templates."""
     diagnosis_drug_row = random_generator.choice(DIAGNOSIS_DRUG_ROWS)
     diagnosis = diagnosis_drug_row["diagnosis"]
     treatment_drug = diagnosis_drug_row["treatment_drug"]
@@ -85,6 +106,7 @@ def create_clean_pair(random_generator):
     summary = " ".join(summary_sentences).format(**slot_values)
     context = context[0].upper() + context[1:]
 
+
     return {
         "context": context,
         "summary": summary,
@@ -95,5 +117,9 @@ def create_clean_pair(random_generator):
     }
 
 
-def create_clean_pairs(count, random_generator):
+
+
+#this repeats the template approach to make the requested number of pairs
+def create_clean_pairs(count: int, random_generator: random.Random) -> list[dict]:
+    """Builds ``count`` clean pairs from the templates."""
     return [create_clean_pair(random_generator) for _ in range(count)]

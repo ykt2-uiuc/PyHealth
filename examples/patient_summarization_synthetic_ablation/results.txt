@@ -1,0 +1,130 @@
+Run: all approaches, 500 summaries each, seed 0.
+Environment: real filter loaded directly because the PyHealth package dependencies are not installed.
+
+=== template ===
+Saved 500 summaries to data\examples_template.jsonl
+Clean summaries: 350 of 500
+   negation: 29
+   wrong_drug: 38
+   wrong_number: 30
+   added_drug: 21
+   wrong_diagnosis: 32
+
+   synthetic-0004: negation: added 'Keep taking your acetaminophen as before.'
+   context: Patient presented to the hospital and was found to have an asthma attack. Started on prednisone 40 mg and completed a 14 day course. Home norgestimate was continued. acetaminophen was held and discontinued at discharge. Patient was stable at discharge.
+   summary: You were in the hospital for an asthma attack. You were treated with prednisone 40 mg for 14 days. Please keep taking your norgestimate. Do not take your acetaminophen until you see your doctor. Follow up with your primary care doctor. [[Keep taking]] your acetaminophen as before.
+
+   synthetic-0005: wrong_drug: 'tamsulosin' changed to 'zolpidem'
+   context: Patient presented to the hospital and was found to have a kidney stone. Received tamsulosin 0.4 mg for 3 days and symptoms resolved. Continued on home hydrocodone. Home aspirin was stopped during the admission. Patient was stable at discharge.
+   summary: You came to the hospital because of a kidney stone. We gave you [[zolpidem]] 0.4 mg for 3 days. Please keep taking your hydrocodone. We stopped your aspirin. Follow up with your primary care doctor.
+
+   synthetic-0006: wrong_drug: 'prednisone' changed to 'albuterol'
+   context: Patient presented to the hospital and was found to have a gout flare. Treated with prednisone 40 mg daily for 7 days with improvement. Continued on home meloxicam. mirtazapine was held and discontinued at discharge. Patient was stable at discharge.
+   summary: You were in the hospital for a gout flare. We gave you [[albuterol]] 40 mg for 7 days. Please keep taking your meloxicam. Do not take your mirtazapine until you see your doctor. Follow up with your primary care doctor. Return if your temperature is above 101 degrees.
+
+Experiments for template
+
+A. Filter checks
+Numbers only: precision 17.2%, recall 20.0%, F1 18.5%
+Medications only: precision 100.0%, recall 39.3%, F1 56.5%
+Both checks: precision 38.2%, recall 59.3%, F1 46.5%
+
+B. Error mix (both checks)
+Detectable types only: precision 50.0%, recall 100.0%, F1 66.7%
+All five types: precision 38.2%, recall 59.3%, F1 46.5%
+
+C. Error rate (both checks)
+10% error rate: precision 20.3%, recall 65.5%, F1 31.0%
+30% error rate: precision 38.2%, recall 59.3%, F1 46.5%
+50% error rate: precision 55.7%, recall 62.5%, F1 58.9%
+
+D. Cleaning (both checks)
+0% harmless-number rate: cleaning changed 78 of 500 summaries
+30% harmless-number rate: cleaning changed 211 of 500 summaries
+
+=== handwritten ===
+Saved 500 summaries to data\examples_handwritten.jsonl
+Clean summaries: 341 of 500
+   added_drug: 33
+   wrong_drug: 42
+   wrong_number: 21
+   wrong_diagnosis: 33
+   negation: 30
+
+   synthetic-0002: added_drug: added 'Start taking rosuvastatin every day.'
+   context: 50yo female w/ LLQ pain + fever, CT showed diverticulitis. Bowel rest , IV abx, then switched to amoxicillin 875 mg BID. Home sertraline continued. Held her celecoxib becc of the GI stuff, stopping it for good.
+   summary: You had diverticulitis, which is inflamation in your colon. Finish the amoxicillin 875 mg twice a day. Keep taking your sertraline. Stop taking celecoxib, it can irritate your gut. Start taking [[rosuvastatin]] every day. Return if your temperature is above 101 degrees.
+
+   synthetic-0003: wrong_drug: 'azithromycin' changed to 'buspirone'
+   context: 68 year old F w/ hx of HTN and DM2, came in w/ 4 days of cough + fever. CXR showed RLL pneumonia. Started azithromycin 500 mg, felt beter by day 2.  Kept her home metformin going. Held lisinopril bc BP was low , not restarting.
+   summary: You were here for pneumonia, which is an infecton in your lungs. We gave you [[buspirone]] 500 mg and you got better pretty quik. Keep taking your metformin like normal. Dont take your lisinopril until your doctor says its ok.
+
+   synthetic-0006: wrong_number: '0.4' changed to '1000'
+   context: 41yo M w/ R flank pain + blood in urin, CT showed a kidney stone, 5 mm. Pain controled, started tamsulosin 0.4 mg daily to help pass it. Home omeprazole continued. Held lisinopril bc of the AKI, stopped at d/c.
+   summary: You came in with a kidney stone. Take tamsulosin [[1000]] mg every day to help it pass. Keep taking omeprazole. We stopped your lisinopril for now since your kidneys were stressed. Strain you urine so we can test the stone.
+
+Experiments for handwritten
+
+A. Filter checks
+Numbers only: precision 12.8%, recall 13.2%, F1 13.0%
+Medications only: precision 100.0%, recall 47.2%, F1 64.1%
+Both checks: precision 40.2%, recall 60.4%, F1 48.2%
+
+B. Error mix (both checks)
+Detectable types only: precision 48.8%, recall 100.0%, F1 65.6%
+All five types: precision 40.2%, recall 60.4%, F1 48.2%
+
+C. Error rate (both checks)
+10% error rate: precision 14.1%, recall 65.0%, F1 23.1%
+30% error rate: precision 40.2%, recall 60.4%, F1 48.2%
+50% error rate: precision 48.9%, recall 58.8%, F1 53.4%
+
+D. Cleaning (both checks)
+0% harmless-number rate: cleaning changed 81 of 500 summaries
+30% harmless-number rate: cleaning changed 214 of 500 summaries
+
+=== llm ===
+Saved 500 summaries to data\examples_llm.jsonl
+Clean summaries: 349 of 500
+   added_drug: 32
+   wrong_diagnosis: 31
+   wrong_number: 23
+   negation: 28
+   wrong_drug: 37
+
+   synthetic-0001: added_drug: added 'Start taking fluticasone every day.'
+   context: The patient is a 69-year-old woman who presented with palpitations and was found to be in atrial fibrillation with a rapid heart rate. Her heart rate was controlled with diltiazem 30 mg four times daily, and she was started on apixaban to prevent stroke. Her home levothyroxine was continued. Her home atenolol was stopped and replaced by diltiazem. She was discharged with a controlled heart rate.
+   summary: You were in the hospital for atrial fibrillation, an irregular and fast heartbeat. We started diltiazem 30 mg four times a day to slow your heart rate, and apixaban to lower your risk of stroke. Please continue taking levothyroxine. We stopped your atenolol. Please do not miss any doses of apixaban. Start taking [[fluticasone]] every day.
+
+   synthetic-0003: wrong_diagnosis: 'pneumonia' changed to 'atrial fibrillation'
+   context: The patient is a 59-year-old man who presented with three days of productive cough and fever and was diagnosed with community-acquired pneumonia. He was started on doxycycline 100 mg twice daily, and his oxygen levels steadily improved. His home rosuvastatin was continued throughout the stay. His home metoprolol was stopped because of a persistently low heart rate. He was discharged in stable condition.
+   summary: You were admitted to the hospital with [[atrial fibrillation]], an infection of the lungs. We treated you with doxycycline 100 mg twice a day, and your breathing improved. Please continue taking rosuvastatin as before. We stopped your metoprolol because your heart rate was low. Please follow up with your primary care doctor.
+
+   synthetic-0008: wrong_number: '40' changed to '5'
+   context: The patient is a 66-year-old woman with chronic lung disease who was admitted for a COPD exacerbation with increased wheezing and cough. She was treated with prednisone 40 mg daily for five days along with inhaled bronchodilators. Her home tiotropium was continued. Her home propranolol was discontinued because it can narrow the airways. She was discharged on room air.
+   summary: You were admitted for a COPD exacerbation, a flare of your chronic lung disease. We treated you with prednisone [[5]] mg each day and breathing treatments. Please continue your tiotropium inhaler. We stopped your propranolol because it can make breathing harder. Please avoid smoke and other lung irritants.
+
+Experiments for llm
+
+A. Filter checks
+Numbers only: precision 13.2%, recall 15.2%, F1 14.2%
+Medications only: precision 100.0%, recall 45.7%, F1 62.7%
+Both checks: precision 37.9%, recall 60.9%, F1 46.7%
+
+B. Error mix (both checks)
+Detectable types only: precision 49.3%, recall 100.0%, F1 66.1%
+All five types: precision 37.9%, recall 60.9%, F1 46.7%
+
+C. Error rate (both checks)
+10% error rate: precision 14.5%, recall 66.7%, F1 23.9%
+30% error rate: precision 37.9%, recall 60.9%, F1 46.7%
+50% error rate: precision 48.7%, recall 59.6%, F1 53.6%
+
+D. Cleaning (both checks)
+0% harmless-number rate: cleaning changed 80 of 500 summaries
+30% harmless-number rate: cleaning changed 220 of 500 summaries
+
+Comparison of approaches (both checks)
+template: precision 38.2%, recall 59.3%, F1 46.5%
+handwritten: precision 40.2%, recall 60.4%, F1 48.2%
+llm: precision 37.9%, recall 60.9%, F1 46.7%
