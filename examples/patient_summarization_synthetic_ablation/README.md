@@ -5,8 +5,14 @@ positions, and scores the PyHealth unsupported-fact filter against them.
 
 ## Setup
 
+From the root of the PyHealth repository:
+
+    pip install -e .
+    pip install -r examples/patient_summarization_synthetic_ablation/requirements.txt
     cd examples/patient_summarization_synthetic_ablation
-    pip install -r requirements.txt
+
+The `llm` approach reads the 12 saved pairs in `llm_clean_pairs.json`, so no
+API key is needed. A key is only used if that file has fewer than 12 pairs.
 
 For the `llm` approach, copy `env_example.txt` to a new file named `.env` and add your key:
 
@@ -145,27 +151,21 @@ connection. It has a filter for every setting, a heatmap whose rows, columns
 and metric you choose, the 10 best runs for the chosen metric, and a sortable
 table of every matching run. The page layout is in `dashboard_template.html`.
 
-## Results and presentation
+## Results
 
-These files hold the outputs of a full run, so they can be read without
-rerunning anything:
+`python main.py --approach all` (500 summaries per approach, seed 0, error
+rate 30%, harmless numbers 30%, both checks):
 
-| File | What it is |
-|---|---|
-| `grid_results.csv` | All 1,404 grid search runs |
-| `dashboard.html` | The comparison page for those runs |
-| `ablation_results.csv` | The 96 ablation runs |
-| `approach_comparison.txt` | Output of `python main.py --approach all` |
+| Approach | Precision | Recall | F1 |
+|---|---|---|---|
+| template | 38.2 | 59.3 | 46.5 |
+| handwritten | 40.2 | 60.4 | 48.2 |
+| llm | 37.9 | 60.9 | 46.7 |
 
-`dl4h_ablation_presentation.pptx` is a 12-slide deck for the
-video, with speaker notes on every slide. Its shapes, tables and charts are
-native PowerPoint objects, so text and chart data can be edited directly
-(right-click a chart and choose Edit Data). To rebuild it after rerunning the
-grid search:
-
-    python make_chart_data.py
-    npm install
-    npm run build
+With every approach, the filter catches every `wrong_drug`, `added_drug` and
+`wrong_number` error and misses every `wrong_diagnosis` and `negation` error.
+Precision is lowered by harmless numbers such as 911, which the number check
+flags.
 
 ## Input files
 
@@ -211,6 +211,4 @@ through the API.
 | `grid_search.py` | Runs every combination of settings and saves the metrics |
 | `make_dashboard.py` | Builds the comparison page from the grid search results |
 | `dashboard_template.html` | The comparison page's layout and code |
-| `make_chart_data.py` | Turns the grid results into the numbers the deck's charts use |
-| `build_presentation.js` | Builds the deck |
 | `experiments.py` | Experiments A to D, the comparison of approaches, and the printed tables |

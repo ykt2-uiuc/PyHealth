@@ -1,3 +1,2 @@
 anthropic
 python-dotenv
-pyhealth @ git+https://github.com/ykt2-uiuc/PyHealth.git@patient-summarization
